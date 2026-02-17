@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shine Store</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <img src="logo.png" class="logo">
+  <h1>Shine Store</h1>
+  <div class="trust">⭐⭐⭐⭐⭐ <b>5.0</b> • 1.2k+ Order</div>
+  <span class="badge">Trusted Seller • Since 2025</span>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h3>Top Up BBC</h3>
+<div class="grid" id="bbcList"></div>
+<div class="price" id="bbcPrice">Pilih nominal</div>
+<button onclick="orderBBC()">Order BBC</button>
+</div>
+
+<div class="card">
+<h3>APK Premium</h3>
+<div class="grid" id="apkList"></div>
+<div class="price" id="apkPrice">Pilih APK</div>
+<button onclick="orderAPK()">Order APK</button>
+</div>
+
+<div id="struk" class="struk hidden"></div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel" class="admin hidden">
+  <h3>Admin APK</h3>
+  <input id="apkName" placeholder="Nama APK">
+  <input id="apkDuration" placeholder="Durasi">
+  <input id="apkPrice" type="number" placeholder="Harga">
+  <button onclick="addAPK()">Tambah APK</button>
+  <button class="danger" onclick="clearAPK()">Reset Semua</button>
+</div>
+<button class="admin-btn" onclick="toggleAdmin()">⚙️</button>
+
+<a class="wa-admin" href="https://wa.me/62895619811574" target="_blank">💬</a>
+
+<script src="script.js"></script>
+</body>
+</html>
