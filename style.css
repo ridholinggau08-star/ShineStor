@@ -1,0 +1,9 @@
+
+body{background:#0e0e13;color:#fff;font-family:Arial;padding:20px}
+header{text-align:center;margin-bottom:20px}
+.logo{width:80px;margin:auto;display:block}
+.badge{background:#2ecc71;padding:4px 10px;border-radius:12px;font-size:12px}
+.card{background:#1a1a22;padding:16px;border-radius:12px;margin-bottom:16px}
+button{padding:10px;border-radius:8px;border:none;background:#4f8cff;color:#fff;margin-top:10px}
+.apk{margin-top:10px}
+.admin-btn{color:#aaa;font-size:12px}
