@@ -1,0 +1,10 @@
+
+body{background:#0f1220;color:#fff;font-family:Arial;padding:20px}
+header{text-align:center;margin-bottom:24px}
+.logo{width:90px;display:block;margin:0 auto 10px}
+.badge{background:linear-gradient(90deg,#4f8cff,#7b5cff);padding:6px 14px;border-radius:20px;font-size:12px}
+.card{background:#1b1f36;padding:18px;border-radius:14px;margin-bottom:18px}
+button{padding:10px 14px;border:none;border-radius:10px;background:#4f8cff;color:#fff;margin-top:10px}
+.apk{margin-bottom:14px}
+.estimasi{font-size:12px;color:#aaa;margin-top:8px}
+footer{text-align:center;font-size:12px;color:#aaa;margin-top:20px}
