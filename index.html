@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shine Store — Top Up & APK Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07090f; --surface:#0e1117; --surface2:#141820;
+  --neon-blue:#3b9eff; --neon-cyan:#0ff0fc; --neon-gold:#f5c842;
+  --neon-purple:#a855f7; --neon-green:#22d3a0; --neon-red:#f43f5e;
+  --text:#f0f4ff; --text-dim:#5a6580;
+  --border:rgba(59,158,255,0.12);
+  --glow-blue:0 0 24px rgba(59,158,255,0.35);
+  --glow-gold:0 0 24px rgba(245,200,66,0.35);
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+body::before{content:'';position:fixed;inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,158,255,0.07) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168,85,247,0.05) 0%, transparent 50%);
+  pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,158,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(59,158,255,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+/* HEADER */
+header{position:relative;z-index:10;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(7,9,15,0.92);backdrop-filter:blur(20px);}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:1px;color:var(--text);}
+.logo span{color:var(--neon-blue);background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-dot{width:7px;height:7px;background:var(--neon-blue);border-radius:50%;display:inline-block;margin-left:3px;box-shadow:0 0 8px var(--neon-blue);vertical-align:middle;}
+.btn-admin{background:rgba(59,158,255,0.06);border:1px solid rgba(59,158,255,0.2);color:var(--text-dim);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:0.72rem;letter-spacing:0.5px;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-admin:hover{border-color:var(--neon-blue);color:var(--neon-blue);background:rgba(59,158,255,0.1);}
+
+/* MAIN NAV */
+.main-nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);position:relative;z-index:9;}
+.nav-btn{flex:1;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);padding:14px 20px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.88rem;font-weight:600;letter-spacing:0.5px;transition:all 0.25s;}
+.nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.02);}
+.nav-btn.active-bbc{color:var(--neon-blue);border-bottom:2px solid var(--neon-blue);background:linear-gradient(180deg,rgba(59,158,255,0.07) 0%,transparent 100%);}
+.nav-btn.active-apk{color:var(--neon-purple);border-bottom:2px solid var(--neon-purple);background:linear-gradient(180deg,rgba(168,85,247,0.07) 0%,transparent 100%);}
+
+/* PAGES */
+.page{display:none;}.page.active{display:block;}
+
+/* HERO */
+.hero{position:relative;z-index:1;text-align:center;padding:56px 20px 40px;}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;letter-spacing:3px;color:var(--neon-blue);text-transform:uppercase;margin-bottom:18px;background:rgba(59,158,255,0.08);border:1px solid rgba(59,158,255,0.2);padding:5px 14px;border-radius:100px;}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--neon-blue);border-radius:50%;box-shadow:0 0 6px var(--neon-blue);}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,7vw,4rem);font-weight:800;line-height:1.1;margin-bottom:14px;background:linear-gradient(135deg,#fff 20%,rgba(59,158,255,0.9) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;}
+.hero p{color:var(--text-dim);font-size:0.95rem;max-width:440px;margin:0 auto;line-height:1.7;}
+.hero-stats{display:flex;justify-content:center;gap:32px;margin-top:28px;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--neon-blue);}
+.hero-stat-label{font-size:0.7rem;color:var(--text-dim);letter-spacing:1px;margin-top:2px;}
+
+/* CONTAINER & CARD */
+.container{position:relative;z-index:2;max-width:700px;margin:0 auto;padding:0 20px 50px;}
+.card{background:linear-gradient(145deg,rgba(14,17,23,0.9),rgba(20,24,32,0.8));border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden;margin-bottom:20px;backdrop-filter:blur(8px);}
+.card::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--neon-blue),transparent);opacity:0.6;}
+.card.purple::before{background:linear-gradient(90deg,transparent,var(--neon-purple),transparent);}
+.card.green::before{background:linear-gradient(90deg,transparent,var(--neon-green),transparent);}
+.card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(59,158,255,0.03) 0%,transparent 70%);pointer-events:none;}
+.card.purple::after{background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(168,85,247,0.03) 0%,transparent 70%);}
+
+/* STEP LABEL */
+.step-label{font-size:0.68rem;letter-spacing:2px;color:var(--neon-blue);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:600;}
+.step-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.step-label.purple{color:var(--neon-purple);}
+.step-label.green{color:var(--neon-green);justify-content:center;}
+.step-label.green::after{display:none;}
+
+/* PACKAGES */
+.packages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:20px;}
+.pkg{background:var(--surface2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px 10px;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.pkg::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.02),transparent);pointer-events:none;}
+.pkg:hover{border-color:rgba(59,158,255,0.4);box-shadow:0 4px 20px rgba(59,158,255,0.12),inset 0 1px 0 rgba(59,158,255,0.1);transform:translateY(-3px);}
+.pkg.selected{border-color:rgba(245,200,66,0.5);background:rgba(245,200,66,0.04);box-shadow:0 0 0 1px rgba(245,200,66,0.3),0 4px 20px rgba(245,200,66,0.1);}
+.pkg.selected::after{content:'✓';position:absolute;top:7px;right:9px;font-size:0.68rem;color:var(--neon-gold);background:rgba(245,200,66,0.15);width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.pkg.popular::before{content:'HOT';position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));color:#fff;font-size:0.5rem;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:0 12px 0 8px;font-family:'Syne',sans-serif;}
+.pkg.sold-out{opacity:0.35;cursor:not-allowed;pointer-events:none;}
+.pkg.sold-out::after{content:'SOLD OUT';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,9,15,0.7);color:var(--neon-red);font-family:'Syne',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;border-radius:12px;}
+.pkg.admin-mode{cursor:pointer!important;pointer-events:all!important;}
+.pkg-num{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:var(--text);}
+.pkg-label{font-size:0.6rem;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin:3px 0 8px;}
+.pkg-label.purple{color:var(--neon-purple);}
+.pkg-price{font-size:0.8rem;color:var(--neon-blue);font-weight:600;}
+
+/* FORM */
+.form-group{margin-bottom:18px;}
+label{display:block;font-size:0.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;}
+input[type=number],input[type=tel],input[type=text],input[type=password]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;transition:all 0.2s;}
+input:focus{border-color:var(--neon-blue);box-shadow:0 0 0 3px rgba(0,212,255,0.08);}
+
+.divider{height:1px;background:var(--border);margin:22px 0;}
+
+/* SUMMARY */
+.summary{background:rgba(59,158,255,0.04);border:1px solid rgba(59,158,255,0.15);border-radius:12px;padding:18px;margin-bottom:20px;display:none;}
+.summary.show{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.summary-row{display:flex;justify-content:space-between;font-size:0.86rem;margin-bottom:8px;color:var(--text-dim);}
+.summary-row:last-child{margin-bottom:0;}
+.summary-row .val{color:var(--text);font-weight:600;}
+.summary-row.total{border-top:1px solid rgba(59,158,255,0.15);padding-top:12px;margin-top:10px;font-size:0.95rem;}
+.summary-row.total .val{color:var(--neon-gold);font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;}
+
+/* BUTTONS */
+.btn-order{width:100%;padding:15px;background:linear-gradient(135deg,#2563eb,var(--neon-blue));color:#fff;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-order::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);pointer-events:none;}
+.btn-order:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(59,158,255,0.35);}
+.btn-order.purple{background:linear-gradient(135deg,#7c3aed,var(--neon-purple));color:#fff;}
+.btn-order.purple:hover{box-shadow:0 8px 32px rgba(168,85,247,0.35);}
+
+/* APK TABS */
+.apk-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.apk-tab{background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px 16px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.82rem;letter-spacing:0.3px;cursor:pointer;transition:all 0.2s;}
+.apk-tab:hover{border-color:rgba(168,85,247,0.3);color:var(--text);}
+.apk-tab.active{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.4);color:var(--neon-purple);box-shadow:0 0 12px rgba(168,85,247,0.15);}
+
+/* TRUST */
+.trust{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;padding-top:22px;border-top:1px solid rgba(255,255,255,0.05);margin-top:8px;}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--text-dim);}
+.trust-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,rgba(59,158,255,0.1),rgba(59,158,255,0.05));border:1px solid rgba(59,158,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.85rem;}
+
+/* CS */
+.cs-btn{display:inline-flex;align-items:center;gap:14px;padding:14px 28px;background:linear-gradient(135deg,#16a34a,#25d366);color:#fff;text-decoration:none;border-radius:12px;transition:all 0.25s;box-shadow:0 4px 24px rgba(37,211,102,0.2);}
+.cs-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,211,102,0.35);}
+
+/* ADMIN BAR */
+.admin-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(7,9,15,0.96);border-top:1px solid rgba(245,200,66,0.3);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;z-index:500;backdrop-filter:blur(20px);}
+.admin-bar-info{font-size:0.76rem;color:var(--neon-gold);letter-spacing:0.5px;font-family:'DM Sans',sans-serif;}
+.admin-bar-btns{display:flex;gap:10px;}
+.btn-exit-admin{padding:7px 16px;background:transparent;border:1px solid rgba(244,63,94,0.4);color:var(--neon-red);border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;}
+.btn-manage-apk{padding:7px 16px;background:linear-gradient(135deg,#ca8a04,var(--neon-gold));border:none;color:#000;border-radius:8px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:800;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal-box{background:linear-gradient(145deg,#0e1117,#141820);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:28px;width:min(380px,92vw);position:relative;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);}
+.modal-box::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,66,0.6),transparent);}
+.modal-box.wide{width:min(680px,95vw);}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.3rem;color:var(--text);font-weight:800;margin-bottom:4px;text-align:center;}
+.modal-sub{font-size:0.78rem;color:var(--text-dim);margin-bottom:22px;text-align:center;}
+.modal-err{color:var(--neon-red);font-size:0.78rem;margin-bottom:10px;text-align:center;display:none;}
+.modal-actions{display:flex;gap:10px;margin-top:14px;}
+.btn-cancel{flex:1;padding:11px;background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-confirm{flex:1;padding:11px;background:linear-gradient(135deg,#ca8a04,var(--neon-gold));border:none;color:#000;border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;}
+
+/* APK MANAGE */
+.apk-manage-item{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px;text-align:left;}
+.apk-manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.apk-manage-name{display:flex;align-items:center;gap:8px;}
+.apk-manage-actions{display:flex;gap:6px;}
+.min-input{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:5px 8px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:0.85rem;outline:none;}
+.plan-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;}
+.btn-sm-g{padding:5px 10px;background:rgba(0,255,136,0.1);color:var(--neon-green);border:1px solid rgba(0,255,136,0.3);border-radius:3px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:0.75rem;}
+.btn-sm-r{padding:5px 10px;background:rgba(255,68,102,0.1);color:var(--neon-red);border:1px solid rgba(255,68,102,0.3);border-radius:3px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:0.75rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;right:20px;background:linear-gradient(135deg,#166534,var(--neon-green));color:#fff;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:0.5px;padding:11px 22px;border-radius:10px;z-index:2000;transform:translateY(80px);opacity:0;transition:all 0.3s;pointer-events:none;box-shadow:0 8px 24px rgba(34,211,160,0.3);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* SCANLINE - subtle */
+.scanline{position:fixed;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(59,158,255,0.2),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:9999;}
+@keyframes scan{0%{top:0}100%{top:100%}}
+
+footer{position:relative;z-index:2;text-align:center;padding:20px;border-top:1px solid rgba(255,255,255,0.04);color:var(--text-dim);font-size:0.72rem;letter-spacing:0.5px;}
+
+/* ===================== MOBILE RESPONSIVE ===================== */
+@media(max-width:600px){
+  /* Smooth scroll */
+  html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+
+  /* Header */
+  header{padding:12px 16px;}
+  .logo{font-size:1.2rem;}
+  .btn-admin{padding:7px 12px;font-size:0.68rem;}
+
+  /* Nav */
+  .nav-btn{font-size:0.85rem;padding:14px 8px;letter-spacing:0;}
+
+  /* Hero */
+  .hero{padding:32px 16px 24px;}
+  .hero h1{font-size:2rem;letter-spacing:-0.5px;}
+  .hero p{font-size:0.88rem;}
+  .hero-stats{gap:20px;margin-top:20px;}
+  .hero-stat-num{font-size:1.3rem;}
+
+  /* Container & Card */
+  .container{padding:0 12px 80px;}
+  .card{padding:18px 14px;border-radius:14px;margin-bottom:14px;}
+
+  /* Packages grid — 2 kolom di HP kecil */
+  .packages-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .pkg{padding:16px 8px;border-radius:10px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .pkg-num{font-size:1.1rem;}
+  .pkg-price{font-size:0.76rem;}
+
+  /* APK tabs — scroll horizontal */
+  .apk-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;}
+  .apk-tabs::-webkit-scrollbar{display:none;}
+  .apk-tab{flex-shrink:0;padding:9px 14px;font-size:0.8rem;white-space:nowrap;}
+
+  /* Form */
+  label{font-size:0.7rem;}
+  input[type=number],input[type=tel],input[type=text],input[type=password]{padding:13px 14px;font-size:1rem;border-radius:10px;}
+
+  /* Buttons — lebih besar untuk touch */
+  .btn-order{padding:17px;font-size:0.95rem;border-radius:14px;min-height:54px;}
+
+  /* Summary */
+  .summary{padding:14px;}
+  .summary-row{font-size:0.84rem;}
+
+  /* Trust */
+  .trust{gap:14px;}
+  .trust-item{font-size:0.76rem;}
+
+  /* CS button */
+  .cs-btn{padding:14px 20px;width:100%;justify-content:center;}
+
+  /* Admin bar */
+  .admin-bar{padding:10px 14px;flex-wrap:wrap;gap:8px;}
+  .admin-bar-info{font-size:0.7rem;width:100%;}
+  .btn-manage-apk,.btn-exit-admin{flex:1;text-align:center;padding:9px 10px;}
+
+  /* Modal */
+  .modal-box{padding:22px 18px;border-radius:16px;}
+  .modal-box.wide{width:95vw;}
+  .modal-title{font-size:1.1rem;}
+  .btn-cancel,.btn-confirm{padding:13px;font-size:0.88rem;min-height:48px;}
+
+  /* Toast */
+  .toast{right:12px;left:12px;text-align:center;bottom:80px;}
+
+  /* Step label */
+  .step-label{font-size:0.65rem;}
+
+  /* APK manage panel inputs */
+  .plan-row{grid-template-columns:1fr 90px auto;}
+  .min-input{font-size:0.8rem;padding:6px;}
+}
+
+/* iPhone notch / safe area */
+@supports(padding:max(0px)){
+  .admin-bar{padding-bottom:max(10px,env(safe-area-inset-bottom));}
+  .container{padding-bottom:max(80px,calc(60px + env(safe-area-inset-bottom)));}
+}
+
+/* ===================== DRAWER ===================== */
+.hamburger{background:transparent;border:none;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:5px;-webkit-tap-highlight-color:transparent;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(4px);}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(280px,80vw);background:linear-gradient(160deg,#0e1117,#141820);border-left:1px solid rgba(255,255,255,0.07);z-index:201;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;overflow-y:auto;}
+.drawer.open{transform:translateX(0);}
+.drawer-header{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.drawer-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--text);}
+.drawer-logo span{color:var(--neon-blue);}
+.drawer-close{background:transparent;border:none;color:var(--text-dim);font-size:1.4rem;cursor:pointer;padding:4px 8px;line-height:1;}
+
+.drawer-nav{padding:16px 12px;}
+.drawer-nav-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.92rem;transition:all 0.2s;margin-bottom:4px;border:none;background:transparent;width:100%;text-align:left;}
+.drawer-nav-item:hover,.drawer-nav-item.active{background:rgba(59,158,255,0.08);color:var(--text);}
+.drawer-nav-item.active-bbc{background:rgba(59,158,255,0.1);color:var(--neon-blue);}
+.drawer-nav-item.active-apk{background:rgba(168,85,247,0.1);color:var(--neon-purple);}
+.drawer-nav-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.drawer-nav-icon.blue{background:rgba(59,158,255,0.12);border:1px solid rgba(59,158,255,0.2);}
+.drawer-nav-icon.purple{background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.2);}
+
+.drawer-divider{height:1px;background:rgba(255,255,255,0.06);margin:8px 16px;}
+
+.drawer-section-label{font-size:0.65rem;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;padding:8px 16px;font-family:'Syne',sans-serif;}
+
+.drawer-footer{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,0.06);}
+.drawer-footer p{font-size:0.72rem;color:var(--text-dim);line-height:1.6;}
+.drawer-wa{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.2);border-radius:10px;text-decoration:none;color:var(--neon-green);font-size:0.85rem;font-family:'DM Sans',sans-serif;margin-top:10px;transition:all 0.2s;}
+.drawer-wa:hover{background:rgba(37,211,102,0.14);}
+
+/* ===================== APK LIST STYLE ===================== */
+.apk-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.apk-list-item{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;touch-action:manipulation;}
+.apk-list-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--neon-purple),rgba(168,85,247,0.3));border-radius:12px 0 0 12px;opacity:0;transition:opacity 0.2s;}
+.apk-list-item:hover{border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.04);transform:translateX(2px);}
+.apk-list-item:hover::before{opacity:1;}
+.apk-list-item.selected{border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.07);box-shadow:0 0 0 1px rgba(168,85,247,0.2);}
+.apk-list-item.selected::before{opacity:1;}
+.apk-list-item.sold-out{opacity:0.38;cursor:not-allowed;pointer-events:none;}
+.apk-list-item.sold-out .apk-item-dur::after{content:' • SOLD OUT';color:var(--neon-red);font-size:0.68rem;}
+.apk-list-item.admin-mode{cursor:pointer!important;pointer-events:all!important;}
+
+.apk-item-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.apk-item-icon{width:38px;height:38px;border-radius:10px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.apk-item-info{min-width:0;}
+.apk-item-dur{font-size:0.9rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.apk-item-sub{font-size:0.72rem;color:var(--text-dim);margin-top:2px;}
+
+.apk-item-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.apk-item-price{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--neon-blue);white-space:nowrap;}
+.apk-item-check{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.apk-list-item.selected .apk-item-check{background:var(--neon-purple);border-color:var(--neon-purple);}
+.apk-item-check::after{content:'✓';font-size:0.65rem;color:#fff;opacity:0;transition:opacity 0.2s;}
+.apk-list-item.selected .apk-item-check::after{opacity:1;}
+
+@media(max-width:600px){
+  .apk-list-item{padding:12px 14px;}
+  .apk-item-icon{width:34px;height:34px;font-size:1rem;}
+  .apk-item-dur{font-size:0.85rem;}
+  .apk-item-price{font-size:0.95rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="modalLogin">
+  <div class="modal-box">
+    <div class="modal-title">🔧 ADMIN</div>
+    <div class="modal-sub">Masukkan password untuk masuk</div>
+    <div class="modal-err" id="loginErr">Password salah!</div>
+    <input type="password" id="passInput" placeholder="••••••" maxlength="20" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalLogin')">BATAL</button>
+      <button class="btn-confirm" onclick="doLogin()">MASUK</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KELOLA APK -->
+<div class="modal-overlay" id="modalApk">
+  <div class="modal-box wide">
+    <div class="modal-title">📱 KELOLA APK</div>
+    <div class="modal-sub">Tambah, edit, hapus aplikasi & paket harga</div>
+    <div style="display:grid;grid-template-columns:1fr 70px auto;gap:8px;margin-bottom:18px;align-items:end;">
+      <div><label>Nama Aplikasi</label><input type="text" id="newAppName" placeholder="Contoh: Netflix"></div>
+      <div><label>Emoji</label><input type="text" id="newAppEmoji" placeholder="🎬" maxlength="4" style="text-align:center;font-size:1.1rem;"></div>
+      <button class="btn-confirm" style="padding:12px 14px;margin-top:22px;" onclick="adminAddApp()">+ TAMBAH</button>
+    </div>
+    <div id="apkManageList"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:8px;" onclick="closeModal('modalApk')">✕ TUTUP</button>
+  </div>
+</div>
+
+<!-- ADMIN BAR -->
+<div class="admin-bar" id="adminBar" style="display:none;">
+  <div class="admin-bar-info">🔧 ADMIN — Klik paket untuk Sold Out</div>
+  <div class="admin-bar-btns">
+    <button class="btn-manage-apk" onclick="openManageApk()">📱 KELOLA APK</button>
+    <button class="btn-exit-admin" onclick="exitAdmin()">KELUAR</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-logo" id="secretLogo" onclick="secretTap()">SHINE<span>STORE</span></div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+
+  <nav class="drawer-nav">
+    <div class="drawer-section-label">Menu</div>
+    <button class="drawer-nav-item active-bbc" id="drawerBbc" onclick="drawerSwitchPage('bbc')">
+      <div class="drawer-nav-icon blue">💎</div>
+      <div><div style="font-weight:600;">Top Up BBC</div><div style="font-size:0.75rem;color:var(--text-dim);margin-top:1px;">Mobile Legends</div></div>
+    </button>
+    <button class="drawer-nav-item" id="drawerApk" onclick="drawerSwitchPage('apk')">
+      <div class="drawer-nav-icon purple">📱</div>
+      <div><div style="font-weight:600;">APK Premium</div><div style="font-size:0.75rem;color:var(--text-dim);margin-top:1px;">Aplikasi Premium</div></div>
+    </button>
+
+    <div class="drawer-divider"></div>
+    <div class="drawer-section-label">Lainnya</div>
+    <a href="https://wa.me/62895619811574?text=Halo%20Shine%20Store!%20Saya%20butuh%20bantuan%20%F0%9F%98%8A" target="_blank" class="drawer-nav-item" style="text-decoration:none;" onclick="closeDrawer()">
+      <div class="drawer-nav-icon" style="background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.2);">💬</div>
+      <div><div style="font-weight:600;color:var(--neon-green);">Customer Service</div><div style="font-size:0.75rem;color:var(--text-dim);margin-top:1px;">Chat WhatsApp 24 Jam</div></div>
+    </a>
+  </nav>
+
+  <div class="drawer-footer">
+    <a href="https://wa.me/62895619811574?text=Halo%20Shine%20Store!%20Saya%20butuh%20bantuan%20%F0%9F%98%8A" target="_blank" class="drawer-wa">
+      <span style="font-size:1.1rem;">💬</span>
+      <div><div style="font-weight:600;">Chat WhatsApp</div><div style="font-size:0.72rem;opacity:0.7;">Respon cepat • 24 Jam</div></div>
+    </a>
+    <p style="margin-top:12px;">© 2025 Shine Store</p>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">SHINE<span>STORE</span><span class="logo-dot"></span></div>
+  <button class="hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- MAIN NAV -->
+<nav class="main-nav">
+  <button class="nav-btn active-bbc" id="navBbc" onclick="switchPage('bbc')">💎 Top Up BBC</button>
+  <button class="nav-btn" id="navApk" onclick="switchPage('apk')">📱 APK Premium</button>
+</nav>
+
+<!-- PAGE BBC -->
+<div class="page active" id="pageBbc">
+  <div class="hero">
+    <div class="hero-tag">Mobile Legends: Bang Bang</div>
+    <h1>Top Up BBC<br>Cepat & Aman</h1>
+    <p>Proses mudah via WhatsApp. BBC langsung masuk dalam hitungan menit.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">10+</div><div class="hero-stat-label">Paket Tersedia</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-label">Siap Melayani</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-label">Terpercaya</div></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="step-label">01 — Pilih Paket BBC</div>
+      <div class="packages-grid" id="bbcGrid"></div>
+      <div class="divider"></div>
+      <div class="step-label">02 — Data Akun</div>
+      <div class="form-group"><label>User ID Mobile Legends</label><input type="number" id="userId" placeholder="Contoh: 123456789" oninput="updateBbcSummary()"></div>
+
+
+      <div class="divider"></div>
+      <div class="step-label">03 — Konfirmasi Order</div>
+      <div class="summary" id="bbcSummary">
+        <div class="summary-row"><span>Paket</span><span class="val" id="sPackage">—</span></div>
+        <div class="summary-row"><span>User ID</span><span class="val" id="sUid">—</span></div>
+
+        <div class="summary-row total"><span>Total Bayar</span><span class="val" id="sPrice">—</span></div>
+      </div>
+      <button class="btn-order" onclick="sendBbcOrder()">💬 ORDER VIA WHATSAPP</button>
+      <div class="trust">
+        <div class="trust-item"><div class="trust-icon">⚡</div>Proses Cepat</div>
+        <div class="trust-item"><div class="trust-icon">🔒</div>Aman & Terpercaya</div>
+        <div class="trust-item"><div class="trust-icon">🕐</div>24 Jam Online</div>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="step-label green">💬 Customer Service</div>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:20px;line-height:1.7;text-align:center;">Ada pertanyaan? Tim kami siap membantu via WhatsApp.</p>
+      <div style="text-align:center;">
+        <a href="https://wa.me/62895619811574?text=Halo%20Shine%20Store!%20Saya%20butuh%20bantuan%20%F0%9F%98%8A" target="_blank" class="cs-btn">
+          <span style="font-size:1.2rem;">💬</span>
+          <div><div style="font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:2px;">CHAT WHATSAPP</div><div style="font-size:0.7rem;opacity:0.8;">Respon cepat • 24 Jam</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE APK -->
+<div class="page" id="pageApk">
+  <div class="hero">
+    <div class="hero-tag">Aplikasi Premium</div>
+    <h1>APK Premium<br>Harga Terjangkau</h1>
+    <p>Aktifasi cepat via WhatsApp. Garansi & terpercaya.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">8+</div><div class="hero-stat-label">Aplikasi</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">Murah</div><div class="hero-stat-label">Harga Terbaik</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">Cepat</div><div class="hero-stat-label">Aktivasi Instan</div></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card purple">
+      <div class="step-label purple">01 — Pilih Aplikasi & Paket</div>
+      <div class="apk-tabs" id="apkTabs"></div>
+      <div class="apk-list" id="apkGrid"></div>
+      <div class="summary" id="apkSummary">
+        <div class="summary-row"><span>Aplikasi</span><span class="val" id="sApkName">—</span></div>
+        <div class="summary-row"><span>Durasi</span><span class="val" id="sApkDur">—</span></div>
+        <div class="summary-row total"><span>Total Bayar</span><span class="val" id="sApkPrice">—</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="step-label purple">02 — Data Order</div>
+
+      <button class="btn-order purple" id="btnApkOrder" style="display:none;" onclick="sendApkOrder()">💬 ORDER APK VIA WHATSAPP</button>
+      <div class="trust">
+        <div class="trust-item"><div class="trust-icon">⚡</div>Proses Cepat</div>
+        <div class="trust-item"><div class="trust-icon">🔒</div>Aman & Terpercaya</div>
+        <div class="trust-item"><div class="trust-icon">🕐</div>24 Jam Online</div>
+      </div>
+    </div>
+    <div class="card green">
+      <div class="step-label green">💬 Customer Service</div>
+      <p style="color:var(--text-dim);font-size:0.86rem;margin-bottom:20px;line-height:1.7;text-align:center;">Ada pertanyaan? Tim kami siap membantu via WhatsApp.</p>
+      <div style="text-align:center;">
+        <a href="https://wa.me/62895619811574?text=Halo%20Shine%20Store!%20Saya%20butuh%20bantuan%20%F0%9F%98%8A" target="_blank" class="cs-btn">
+          <span style="font-size:1.2rem;">💬</span>
+          <div><div style="font-family:'Rajdhani',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:2px;">CHAT WHATSAPP</div><div style="font-size:0.7rem;opacity:0.8;">Respon cepat • 24 Jam</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2025 <strong style="color:var(--neon-blue);font-family:'Syne',sans-serif;">SHINE STORE</strong> — Top Up BBC & APK Premium &nbsp;•&nbsp; Semua transaksi diproses via WhatsApp</footer>
+
+<script>
+// ============================================================
+// CONFIG — GANTI DI SINI
+// ============================================================
+const WA_NUMBER = '62895619811574';
+const ADMIN_PASS = '875421';
+const SOLD_KEY = 'shinestore_sold';
+const APK_KEY = 'shinestore_apk';
+
+// ============================================================
+// SUPABASE CONFIG
+// ============================================================
+const SB_URL = 'https://simyjfxevsvomwqhphib.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpbXlqZnhldnN2b213cWhwaGliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzU0OTAsImV4cCI6MjA4Njk1MTQ5MH0.mN2r3tb5v4fglKs45xtMklEo-j_MrG7gD3sF79_MYqA';
+
+async function sbFetch(path, options={}) {
+  const res = await fetch(SB_URL + '/rest/v1/' + path, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || 'return=representation',
+    },
+    ...options
+  });
+  if(!res.ok) throw new Error(await res.text());
+  return res.status === 204 ? null : res.json();
+}
+
+// ============================================================
+// BBC PACKAGES
+// ============================================================
+const BBC_PACKAGES = [
+  {bbc:5000,price:19000},
+  {bbc:10000,price:38000},
+  {bbc:15000,price:57000},
+  {bbc:20000,price:76000},
+  {bbc:25000,price:95000,popular:true},
+  {bbc:30000,price:114000},
+  {bbc:35000,price:133000},
+  {bbc:40000,price:152000},
+  {bbc:45000,price:171000},
+  {bbc:50000,price:190000},
+];
+
+// ============================================================
+// APK DEFAULT DATA
+// ============================================================
+const APK_DEFAULT = [
+  {name:'CapCut',emoji:'🎬',plans:[{dur:'7 Hari',price:1200},{dur:'14 Hari',price:1500},{dur:'21 Hari',price:1800},{dur:'28 Hari',price:2200},{dur:'35 Hari',price:2900},{dur:'42 Hari',price:3500}]},
+  {name:'Canva',emoji:'🎨',plans:[{dur:'1 Bulan',price:12000},{dur:'1 Tahun',price:108000},{dur:'Lifetime',price:118000}]},
+  {name:'iQIYI',emoji:'🎬',plans:[{dur:'Standar 1 Bulan',price:3000},{dur:'Standar 1 Tahun',price:7000}]},
+  {name:'Vidio',emoji:'📺',plans:[{dur:'Mobile Sharing 1 Bln',price:13300},{dur:'Mobile Private 1 Bln',price:21200},{dur:'All Device Sharing 1 Bln',price:19800}]},
+  {name:'Spotify',emoji:'🎵',plans:[{dur:'Individual',price:8000},{dur:'Individual No Garansi',price:800}]},
+  {name:'Netflix',emoji:'🎬',plans:[
+    {dur:'1P 1U 1 Hari',price:2555},
+    {dur:'1P 1U 1 Bulan',price:13000},
+    {dur:'1P 2U 1 Bulan',price:10800},
+    {dur:'Semi 1 Bulan',price:15500},
+    {dur:'1P 1U 7 Hari',price:8800},
+    {dur:'1P 2U 7 Hari',price:8000},
+    {dur:'Semi 7 Hari',price:9800},
+  ]},
+  {name:'Alight Motion',emoji:'✨',plans:[
+    {dur:'1 Tahun',price:1000},
+  ]},
+  {name:'Viu',emoji:'🎥',plans:[
+    {dur:'1 Bulan',price:10},
+    {dur:'1 Tahun',price:30},
+    {dur:'Lifetime',price:2000},
+  ]},
+];
+
+// ============================================================
+// HELPERS
+// ============================================================
+const fmt = n => 'Rp ' + n.toLocaleString('id-ID');
+const getSold = () => { try{return JSON.parse(localStorage.getItem(SOLD_KEY))||{};}catch(e){return {};} };
+const saveSold = d => {
+  localStorage.setItem(SOLD_KEY, JSON.stringify(d));
+  // Sync sold out to Supabase sold_out table
+  sbFetch('sold_out?id=eq.1', {method:'PATCH', body:JSON.stringify({data:d}), prefer:'return=minimal'})
+    .catch(()=> sbFetch('sold_out', {method:'POST', body:JSON.stringify({id:1,data:d}), prefer:'return=minimal'}).catch(()=>{}));
+};
+async function loadSoldFromSupabase() {
+  try {
+    const res = await sbFetch('sold_out?id=eq.1&select=data');
+    if(res && res.length) localStorage.setItem(SOLD_KEY, JSON.stringify(res[0].data));
+  } catch(e){}
+}
+async function getApkData() {
+  try {
+    const data = await sbFetch('apk_products?select=*&order=urutan.asc');
+    return data.map(r => ({id:r.id, name:r.name, emoji:r.emoji, plans:r.plans, urutan:r.urutan}));
+  } catch(e) {
+    console.error('Supabase error:', e);
+    return APK_DEFAULT;
+  }
+}
+
+let isAdmin=false, selBbc=null, selApk=null, curApkIdx=0;
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchPage(page) {
+  document.getElementById('pageBbc').classList.toggle('active', page==='bbc');
+  document.getElementById('pageApk').classList.toggle('active', page==='apk');
+  document.getElementById('navBbc').className = 'nav-btn' + (page==='bbc'?' active-bbc':'');
+  document.getElementById('navApk').className = 'nav-btn' + (page==='apk'?' active-apk':'');
+  if(page==='apk') initApk();
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function doLogin() {
+  if(document.getElementById('passInput').value === ADMIN_PASS) {
+    closeModal('modalLogin');
+    document.getElementById('passInput').value='';
+    document.getElementById('loginErr').style.display='none';
+    isAdmin=true;
+    document.getElementById('adminBar').style.display='flex';
+    renderBbc(); renderApkGrid();
+    showToast('Mode Admin Aktif 🔧');
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('passInput').value='';
+  }
+}
+
+function exitAdmin() {
+  isAdmin=false;
+  document.getElementById('adminBar').style.display='none';
+  renderBbc(); renderApkGrid();
+  showToast('Keluar dari Admin');
+}
+
+// ============================================================
+// BBC
+// ============================================================
+function renderBbc() {
+  const grid=document.getElementById('bbcGrid');
+  grid.innerHTML='';
+  const sold=getSold();
+  BBC_PACKAGES.forEach((pkg,i) => {
+    const key='bbc_'+pkg.bbc;
+    const isSold=!!sold[key];
+    const div=document.createElement('div');
+    div.className='pkg'+(pkg.popular?' popular':'')+(isSold?' sold-out':'')+(isAdmin?' admin-mode':'');
+    div.innerHTML=`<div class="pkg-num">${pkg.bbc.toLocaleString('id-ID')}</div><div class="pkg-label">💎 BBC</div><div class="pkg-price">${fmt(pkg.price)}</div>`;
+    div.onclick=()=>{ if(isAdmin){toggleSold(key);return;} if(!isSold) selectBbc(i,div); };
+    grid.appendChild(div);
+  });
+}
+
+function selectBbc(i,el) {
+  document.querySelectorAll('#bbcGrid .pkg').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selBbc=BBC_PACKAGES[i];
+  updateBbcSummary();
+}
+
+function updateBbcSummary() {
+  if(!selBbc) return;
+  document.getElementById('bbcSummary').classList.add('show');
+  document.getElementById('sPackage').textContent=selBbc.bbc.toLocaleString('id-ID')+' BBC';
+  document.getElementById('sUid').textContent=document.getElementById('userId').value||'—';
+  document.getElementById('sPrice').textContent=fmt(selBbc.price);
+}
+
+function sendBbcOrder() {
+  if(!selBbc){alert('⚠️ Pilih paket BBC dulu!');return;}
+  const uid=document.getElementById('userId').value.trim();
+  if(!uid){alert('⚠️ Masukkan User ID!');return;}
+  const msg=`Halo Shine Store! 👋\n\nSaya ingin top up Mobile Legends:\n\n💎 *Paket:* ${selBbc.bbc.toLocaleString('id-ID')} BBC\n💰 *Harga:* ${fmt(selBbc.price)}\n🆔 *User ID:* ${uid}\n\nMohon dikonfirmasi. Terima kasih!`;
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ============================================================
+// APK
+// ============================================================
+let cachedApkData = null;
+
+async function initApk() {
+  document.getElementById('apkTabs').innerHTML='<span style="color:var(--text-dim);font-size:0.8rem;">Memuat...</span>';
+  cachedApkData = await getApkData();
+  const tabs=document.getElementById('apkTabs');
+  tabs.innerHTML='';
+  if(!cachedApkData.length){document.getElementById('apkGrid').innerHTML='<p style="color:var(--text-dim)">Belum ada APK.</p>';return;}
+  cachedApkData.forEach((app,i)=>{
+    const btn=document.createElement('button');
+    btn.className='apk-tab'+(i===0?' active':'');
+    btn.textContent=app.emoji+' '+app.name;
+    btn.onclick=()=>{
+      curApkIdx=i;
+      document.querySelectorAll('.apk-tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      selApk=null;
+      document.getElementById('apkSummary').classList.remove('show');
+      document.getElementById('btnApkOrder').style.display='none';
+      renderApkGrid();
+    };
+    tabs.appendChild(btn);
+  });
+  curApkIdx=0;
+  renderApkGrid();
+}
+
+function renderApkGrid() {
+  const grid=document.getElementById('apkGrid');
+  grid.innerHTML='';
+  const data=cachedApkData||APK_DEFAULT;
+  const app=data[curApkIdx];
+  if(!app) return;
+  const sold=getSold();
+  app.plans.forEach((plan,i)=>{
+    const key='apk_'+app.name+'_'+i;
+    const isSold=!!sold[key];
+    const div=document.createElement('div');
+    div.className='apk-list-item'+(isSold?' sold-out':'')+(isAdmin?' admin-mode':'');
+    div.innerHTML=`
+      <div class="apk-item-left">
+        <div class="apk-item-icon">${app.emoji}</div>
+        <div class="apk-item-info">
+          <div class="apk-item-dur">${plan.dur}</div>
+          <div class="apk-item-sub">${app.name} Premium</div>
+        </div>
+      </div>
+      <div class="apk-item-right">
+        <div class="apk-item-price">${fmt(plan.price)}</div>
+        <div class="apk-item-check"></div>
+      </div>`;
+    div.onclick=()=>{ if(isAdmin){toggleSold(key);return;} if(!isSold) selectApkPlan(app,plan,div); };
+    grid.appendChild(div);
+  });
+}
+
+function selectApkPlan(app,plan,el) {
+  document.querySelectorAll('#apkGrid .apk-list-item').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selApk={app:app.name,dur:plan.dur,price:plan.price};
+  document.getElementById('apkSummary').classList.add('show');
+  document.getElementById('btnApkOrder').style.display='block';
+  document.getElementById('sApkName').textContent=app.name;
+  document.getElementById('sApkDur').textContent=plan.dur;
+  document.getElementById('sApkPrice').textContent=fmt(plan.price);
+}
+
+function sendApkOrder() {
+  if(!selApk){alert('Pilih paket APK dulu!');return;}
+  const msg=`Halo Shine Store! 👋\n\nSaya ingin beli APK Premium:\n\n📱 *Aplikasi:* ${selApk.app} Premium\n📅 *Durasi:* ${selApk.dur}\n💰 *Harga:* ${fmt(selApk.price)}\n\nMohon dikonfirmasi. Terima kasih!`;
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ============================================================
+// SOLD OUT
+// ============================================================
+function toggleSold(key) {
+  const sold=getSold();
+  if(sold[key]) delete sold[key]; else sold[key]=true;
+  saveSold(sold);
+  renderBbc(); renderApkGrid();
+  showToast(sold[key]?'Ditandai Sold Out!':'Sold Out dilepas!');
+}
+
+// ============================================================
+// ADMIN APK MANAGE
+// ============================================================
+function openManageApk() {
+  renderManageList();
+  openModal('modalApk');
+}
+
+async function renderManageList() {
+  cachedApkData = await getApkData();
+  const data=cachedApkData;
+  const list=document.getElementById('apkManageList');
+  if(!data.length){list.innerHTML='<p style="color:var(--text-dim);text-align:center;padding:16px;">Belum ada APK.</p>';return;}
+  list.innerHTML=data.map((app,ai)=>`
+    <div class="apk-manage-item">
+      <div class="apk-manage-header">
+        <div class="apk-manage-name">
+          <input class="min-input" style="width:44px;text-align:center;font-size:1.1rem;" value="${app.emoji}" maxlength="4" onchange="updateApp(${ai},'emoji',this.value)">
+          <input class="min-input" style="width:150px;" value="${app.name}" onchange="updateApp(${ai},'name',this.value)">
+        </div>
+        <div class="apk-manage-actions">
+          <button class="btn-sm-g" onclick="addPlan(${ai})">+ PAKET</button>
+          <button class="btn-sm-r" onclick="deleteApp(${ai})">🗑 HAPUS</button>
+        </div>
+      </div>
+      ${app.plans.length?`<div style="font-size:0.65rem;letter-spacing:2px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;">Durasi — Harga (Rp)</div>`:''}
+      ${app.plans.map((plan,pi)=>`
+        <div class="plan-row">
+          <input class="min-input" style="width:100%;" value="${plan.dur}" onchange="updatePlan(${ai},${pi},'dur',this.value)">
+          <input class="min-input" type="number" style="width:100%;" value="${plan.price}" onchange="updatePlan(${ai},${pi},'price',this.value)">
+          <button class="btn-sm-r" onclick="deletePlan(${ai},${pi})">🗑</button>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+async function adminAddApp() {
+  const name=document.getElementById('newAppName').value.trim();
+  const emoji=document.getElementById('newAppEmoji').value.trim()||'📱';
+  if(!name){showToast('Nama wajib diisi!');return;}
+  try {
+    const data = cachedApkData||[];
+    await sbFetch('apk_products', {method:'POST', body:JSON.stringify({name,emoji,plans:[],urutan:data.length+1})});
+    document.getElementById('newAppName').value='';
+    document.getElementById('newAppEmoji').value='';
+    await renderManageList(); await initApk();
+    showToast('Aplikasi ditambahkan! ✅');
+  } catch(e){ showToast('Gagal: '+e.message); }
+}
+
+async function updateApp(ai,field,val) {
+  try {
+    const app=(cachedApkData||APK_DEFAULT)[ai];
+    const update={}; update[field]=val;
+    await sbFetch('apk_products?id=eq.'+app.id, {method:'PATCH', body:JSON.stringify(update), prefer:'return=minimal'});
+    await initApk(); showToast('Tersimpan ✓');
+  } catch(e){ showToast('Gagal simpan'); }
+}
+
+async function deleteApp(ai) {
+  if(!confirm('Hapus aplikasi ini?')) return;
+  try {
+    const app=(cachedApkData||APK_DEFAULT)[ai];
+    await sbFetch('apk_products?id=eq.'+app.id, {method:'DELETE', prefer:'return=minimal'});
+    await renderManageList(); await initApk(); showToast('Dihapus!');
+  } catch(e){ showToast('Gagal hapus'); }
+}
+
+async function addPlan(ai) {
+  try {
+    const app=(cachedApkData||APK_DEFAULT)[ai];
+    const plans=[...app.plans,{dur:'Durasi Baru',price:0}];
+    await sbFetch('apk_products?id=eq.'+app.id, {method:'PATCH', body:JSON.stringify({plans}), prefer:'return=minimal'});
+    await renderManageList(); await initApk();
+  } catch(e){ showToast('Gagal tambah paket'); }
+}
+
+async function updatePlan(ai,pi,field,val) {
+  try {
+    const app=(cachedApkData||APK_DEFAULT)[ai];
+    const plans=JSON.parse(JSON.stringify(app.plans));
+    plans[pi][field]=field==='price'?parseInt(val)||0:val;
+    await sbFetch('apk_products?id=eq.'+app.id, {method:'PATCH', body:JSON.stringify({plans}), prefer:'return=minimal'});
+    await initApk(); showToast('Tersimpan ✓');
+  } catch(e){ showToast('Gagal simpan'); }
+}
+
+async function deletePlan(ai,pi) {
+  try {
+    const app=(cachedApkData||APK_DEFAULT)[ai];
+    const plans=JSON.parse(JSON.stringify(app.plans));
+    plans.splice(pi,1);
+    await sbFetch('apk_products?id=eq.'+app.id, {method:'PATCH', body:JSON.stringify({plans}), prefer:'return=minimal'});
+    await renderManageList(); await initApk(); showToast('Paket dihapus!');
+  } catch(e){ showToast('Gagal hapus paket'); }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderBbc();
+loadSoldFromSupabase().then(()=>{ renderBbc(); });
+initApk();
+</script>
+</body>
+</html>
