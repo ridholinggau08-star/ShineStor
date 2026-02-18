@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shine Store — Top Up Mobile Legends</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0d1120;
+    --surface2: #111827;
+    --neon-blue: #00d4ff;
+    --neon-cyan: #0ff0fc;
+    --neon-gold: #ffd700;
+    --neon-purple: #bf5af2;
+    --text: #e8edf5;
+    --text-dim: #6b7a99;
+    --border: rgba(0,212,255,0.15);
+    --glow-blue: 0 0 20px rgba(0,212,255,0.4);
+    --glow-gold: 0 0 20px rgba(255,215,0,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: orb-float 8s ease-in-out infinite;
+  }
+
+  @keyframes orb-float {
+    0%, 100% { transform: translate(0,0); }
+    50% { transform: translate(100px, 50px); }
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(5,8,16,0.8);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--neon-blue);
+    text-shadow: var(--glow-blue);
+  }
+
+  .logo span { color: var(--neon-gold); text-shadow: var(--glow-gold); }
+
+  .badge {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 30%, var(--neon-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* FORM CARD */
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-cyan), transparent);
+  }
+
+  /* STEP LABEL */
+  .step-label {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--neon-blue);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 20px; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  input, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+  }
+
+  select option { background: #1a2035; }
+
+  /* DIAMOND PACKAGES */
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .pkg {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .pkg:hover {
+    border-color: var(--neon-blue);
+    box-shadow: var(--glow-blue);
+    transform: translateY(-2px);
+  }
+
+  .pkg.selected {
+    border-color: var(--neon-gold);
+    background: rgba(255,215,0,0.06);
+    box-shadow: var(--glow-gold);
+  }
+
+  .pkg.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 0.7rem;
+    color: var(--neon-gold);
+  }
+
+  .pkg .diamond {
+    font-size: 1.4rem;
+    font-weight: 900;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .pkg .diamond-label {
+    font-size: 0.65rem;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .pkg .price {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .pkg.popular::before {
+    content: 'POPULER';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neon-blue);
+    color: #000;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* ORDER SUMMARY */
+  .summary {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+    margin-bottom: 24px;
+    display: none;
+  }
+
+  .summary.show { display: block; }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+  }
+
+  .summary-row:last-child { margin-bottom: 0; }
+
+  .summary-row .val {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .summary-row.total {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 10px;
+    font-size: 1rem;
+  }
+
+  .summary-row.total .val {
+    color: var(--neon-gold);
+    font-size: 1.1rem;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* BUTTON */
+  .btn-order {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #00b8d9, #00d4ff);
+    color: #050810;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-order::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.4);
+  }
+
+  .btn-order:hover::before { opacity: 1; }
+
+  .btn-order:active { transform: translateY(0); }
+
+  .btn-order .wa-icon { margin-right: 8px; }
+
+  /* TRUST BADGES */
+  .trust {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .trust-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  /* Scan line effect */
+  .scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
+    animation: scan 6s linear infinite;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  @keyframes scan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+  }
+
+
+  /* APK TABS */
+  .apk-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .apk-tab {
+    background: var(--surface2);
+    border: 1px solid rgba(191,90,242,0.3);
+    border-radius: 4px;
+    padding: 8px 18px;
+    color: var(--text-dim);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .apk-tab:hover, .apk-tab.active {
+    border-color: var(--neon-purple);
+    color: var(--neon-purple);
+    box-shadow: 0 0 12px rgba(191,90,242,0.3);
+  }
+
+  /* Pulse animation */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 rgba(0,212,255,0); }
+    50% { box-shadow: var(--glow-blue); }
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    header { padding: 14px 16px; }
+    .card { padding: 20px 16px; }
+    .hero { padding: 40px 16px 30px; }
+    .packages-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">SHINE<span>STORE</span></div>
+  <div class="badge">⚡ Top Up 24 Jam</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">// Mobile Legends: Bang Bang</div>
+  <h1>Top Up BBC<br>Cepat & Aman</h1>
+  <p>Proses manual via WhatsApp. BBC masuk dalam hitungan menit.</p>
+</div>
+
+<!-- MAIN FORM -->
+<div class="container">
+  <div class="card">
+
+    <!-- STEP 1: Pilih Paket -->
+    <div class="step-label">01 — Pilih Paket BBC</div>
+    <div class="packages-grid" id="packagesGrid">
+      <!-- generated by JS -->
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STEP 2: Data Akun -->
+    <div class="step-label">02 — Data Akun</div>
+
+    <div class="form-group">
+      <label>User ID Mobile Legends</label>
+      <input type="number" id="userId" placeholder="Contoh: 123456789" oninput="updateSummary()">
+    </div>
+
+    <div class="form-group">
+      <label>Zone ID (Server)</label>
+      <input type="number" id="zoneId" placeholder="Contoh: 1234" oninput="updateSummary()">
+    </div>
+
+    <div class="form-group">
+      <label>Nomor WhatsApp Kamu</label>
+      <input type="tel" id="waNum" placeholder="Contoh: 08xxxxxxxxxx" oninput="updateSummary()">
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STEP 3: Ringkasan & Order -->
+    <div class="step-label">03 — Konfirmasi Order</div>
+
+    <div class="summary" id="summary">
+      <div class="summary-row"><span>Paket</span><span class="val" id="sum-pkg">—</span></div>
+      <div class="summary-row"><span>User ID</span><span class="val" id="sum-uid">—</span></div>
+      <div class="summary-row"><span>Zone ID</span><span class="val" id="sum-zone">—</span></div>
+      <div class="summary-row total"><span>Total Bayar</span><span class="val" id="sum-price">—</span></div>
+    </div>
+
+    <button class="btn-order" onclick="sendOrder()">
+      <span class="wa-icon">💬</span> ORDER VIA WHATSAPP
+    </button>
+
+    <div class="divider"></div>
+
+    <!-- APK PREMIUM -->
+    <div class="step-label" style="color: var(--neon-purple);">&#x1F525; APK Premium</div>
+
+    <div class="apk-tabs" id="apkTabs">
+      <!-- diisi otomatis dari data admin -->
+    </div>
+
+    <div class="packages-grid" id="apkGrid"></div>
+
+    <div class="form-group" id="apk-form" style="display:none;">
+      <label>Email / Akun Tujuan</label>
+      <input type="text" id="apkEmail" placeholder="Contoh: namakamu@gmail.com" oninput="updateApkSummary()">
+      <div style="font-size:0.72rem; color: var(--text-dim); margin-top:6px; letter-spacing:0.5px;">Masukkan email yang akan didaftarkan premium</div>
+    </div>
+
+    <div class="summary" id="apk-summary" style="display:none;">
+      <div class="summary-row"><span>Aplikasi</span><span class="val" id="apk-sum-app">—</span></div>
+      <div class="summary-row"><span>Durasi</span><span class="val" id="apk-sum-dur">—</span></div>
+      <div class="summary-row"><span>Email</span><span class="val" id="apk-sum-email">—</span></div>
+      <div class="summary-row total"><span>Total Bayar</span><span class="val" id="apk-sum-price">—</span></div>
+    </div>
+
+    <button class="btn-order" id="btn-apk-order" style="display:none; background: linear-gradient(135deg, #9b59b6, #bf5af2); margin-bottom: 24px;" onclick="sendApkOrder()">
+      <span class="wa-icon">&#x1F4AC;</span> ORDER APK VIA WHATSAPP
+    </button>
+
+    <!-- TRUST -->
+    <div class="trust">
+      <div class="trust-item">
+        <div class="trust-icon">⚡</div>
+        Proses Cepat
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        Aman & Terpercaya
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🕐</div>
+        24 Jam Online
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  © 2025 SHINE STORE — Top Up Mobile Legends • Semua transaksi diproses via WhatsApp
+</footer>
+
+<script>
+  // =====================
+  // CONFIG — GANTI DI SINI
+  // =====================
+  const WA_NUMBER = '62895619811574'; // Ganti dengan nomor WA kamu!
+
+  const packages = [
+    { bbc: 5000,   price: 19000  },
+    { bbc: 10000,  price: 38000  },
+    { bbc: 15000,  price: 57000  },
+    { bbc: 20000,  price: 76000  },
+    { bbc: 25000,  price: 95000  },
+    { bbc: 30000,  price: 114000 },
+    { bbc: 35000,  price: 133000 },
+    { bbc: 40000,  price: 152000 },
+    { bbc: 45000,  price: 171000 },
+    { bbc: 50000,  price: 190000, popular: true },
+    { bbc: 55000,  price: 209000 },
+    { bbc: 60000,  price: 228000 },
+    { bbc: 65000,  price: 247000 },
+    { bbc: 70000,  price: 266000 },
+    { bbc: 75000,  price: 285000 },
+    { bbc: 80000,  price: 304000 },
+    { bbc: 85000,  price: 323000 },
+    { bbc: 90000,  price: 342000 },
+    { bbc: 95000,  price: 361000 },
+    { bbc: 100000, price: 380000 },
+    { bbc: 105000, price: 399000 },
+    { bbc: 110000, price: 418000 },
+    { bbc: 115000, price: 437000 },
+    { bbc: 120000, price: 456000 },
+    { bbc: 125000, price: 475000 },
+    { bbc: 130000, price: 494000 },
+    { bbc: 135000, price: 513000 },
+    { bbc: 140000, price: 532000 },
+    { bbc: 145000, price: 551000 },
+    { bbc: 150000, price: 570000 },
+    { bbc: 155000, price: 589000 },
+    { bbc: 160000, price: 608000 },
+    { bbc: 165000, price: 627000 },
+    { bbc: 170000, price: 646000 },
+    { bbc: 175000, price: 665000 },
+    { bbc: 180000, price: 684000 },
+    { bbc: 185000, price: 703000 },
+    { bbc: 190000, price: 722000 },
+    { bbc: 195000, price: 741000 },
+    { bbc: 200000, price: 760000 },
+    { bbc: 205000, price: 779000 },
+    { bbc: 210000, price: 798000 },
+    { bbc: 215000, price: 817000 },
+    { bbc: 220000, price: 836000 },
+    { bbc: 225000, price: 855000 },
+    { bbc: 230000, price: 874000 },
+    { bbc: 235000, price: 893000 },
+    { bbc: 240000, price: 912000 },
+    { bbc: 245000, price: 931000 },
+    { bbc: 250000, price: 950000 },
+    { bbc: 255000, price: 969000 },
+    { bbc: 260000, price: 988000 },
+    { bbc: 265000, price: 1007000 },
+    { bbc: 270000, price: 1026000 },
+    { bbc: 275000, price: 1045000 },
+    { bbc: 280000, price: 1064000 },
+    { bbc: 285000, price: 1083000 },
+    { bbc: 290000, price: 1102000 },
+    { bbc: 295000, price: 1121000 },
+    { bbc: 300000, price: 1140000 },
+  ];
+  // =====================
+
+  let selectedPkg = null;
+
+  function formatRupiah(n) {
+    return 'Rp ' + n.toLocaleString('id-ID');
+  }
+
+  // Render packages
+  const grid = document.getElementById('packagesGrid');
+  packages.forEach((pkg, i) => {
+    const div = document.createElement('div');
+    div.className = 'pkg' + (pkg.popular ? ' popular' : '');
+    div.innerHTML = `
+      <div class="diamond">${pkg.bbc}</div>
+      <div class="diamond-label">💎 BBC</div>
+      <div class="price">${formatRupiah(pkg.price)}</div>
+    `;
+    div.onclick = () => selectPkg(i, div);
+    grid.appendChild(div);
+  });
+
+  function selectPkg(i, el) {
+    document.querySelectorAll('.pkg').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPkg = packages[i];
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const uid = document.getElementById('userId').value;
+    const zone = document.getElementById('zoneId').value;
+
+    if (!selectedPkg) return;
+
+    const summary = document.getElementById('summary');
+    summary.classList.add('show');
+
+    document.getElementById('sum-pkg').textContent = `${selectedPkg.bbc} BBC`;
+    document.getElementById('sum-uid').textContent = uid || '—';
+    document.getElementById('sum-zone').textContent = zone || '—';
+    document.getElementById('sum-price').textContent = formatRupiah(selectedPkg.price);
+  }
+
+  function sendOrder() {
+    const uid = document.getElementById('userId').value.trim();
+    const zone = document.getElementById('zoneId').value.trim();
+    const wa = document.getElementById('waNum').value.trim();
+
+    if (!selectedPkg) {
+      alert('⚠️ Pilih paket BBC terlebih dahulu!');
+      return;
+    }
+    if (!uid) {
+      alert('⚠️ Masukkan User ID Mobile Legends kamu!');
+      return;
+    }
+    if (!zone) {
+      alert('⚠️ Masukkan Zone ID kamu!');
+      return;
+    }
+    if (!wa) {
+      alert('⚠️ Masukkan nomor WhatsApp kamu!');
+      return;
+    }
+
+    const msg = `Halo Shine Store! 👋
+
+Saya ingin top up Mobile Legends:
+
+💎 *Paket:* ${selectedPkg.bbc} BBC
+💰 *Harga:* ${formatRupiah(selectedPkg.price)}
+🆔 *User ID:* ${uid}
+🌐 *Zone ID:* ${zone}
+📱 *No. WA saya:* ${wa}
+
+Mohon dikonfirmasi. Terima kasih!`;
+
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  }
+
+  // =====================================================================
+  // EDIT APK DI SINI - Tambah/ubah aplikasi & harga langsung di file ini
+  // Cara: copy blok { ... }, paste setelah koma, ubah nama/harga, save,
+  //       lalu upload ulang ke GitHub. Selesai!
+  // =====================================================================
+  const APK_DATA = [
+
+    {
+      name:  'CapCut',
+      emoji: '🎬',
+      plans: [
+        { dur: '7 Hari',  price: 1200 },
+        { dur: '14 Hari', price: 1500 },
+        { dur: '21 Hari', price: 1800 },
+        { dur: '28 Hari', price: 2200 },
+        { dur: '35 Hari', price: 2900 },
+        { dur: '42 Hari', price: 3500 },
+      ]
+    },
+
+    // Contoh tambah Spotify (hapus // untuk aktifkan):
+    // {
+    //   name:  'Spotify',
+    //   emoji: '🎵',
+    //   plans: [
+    //     { dur: '1 Bulan',  price: 15000 },
+    //     { dur: '3 Bulan',  price: 40000 },
+    //     { dur: '12 Bulan', price: 140000 },
+    //   ]
+    // },
+
+  ];
+  // =====================================================================
+
+  function getApkData() { return APK_DATA; }
+
+  let selectedApk = null;
+  let currentAppIndex = 0;
+  let apkData = [];
+
+  function initApkSection() {
+    apkData = getApkData();
+    const tabs = document.getElementById('apkTabs');
+    tabs.innerHTML = '';
+
+    if (apkData.length === 0) {
+      document.getElementById('apkGrid').innerHTML = '<div style="color:var(--text-dim);font-size:0.85rem;padding:16px 0;">Belum ada APK tersedia.</div>';
+      return;
+    }
+
+    apkData.forEach((app, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'apk-tab' + (i === 0 ? ' active' : '');
+      btn.textContent = app.emoji + ' ' + app.name;
+      btn.onclick = () => selectApp(i, btn);
+      tabs.appendChild(btn);
+    });
+
+    currentAppIndex = 0;
+    renderApkGrid();
+  }
+
+  function selectApp(idx, btn) {
+    currentAppIndex = idx;
+    document.querySelectorAll('.apk-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    selectedApk = null;
+    renderApkGrid();
+    document.getElementById('apk-form').style.display = 'none';
+    document.getElementById('apk-summary').style.display = 'none';
+    document.getElementById('btn-apk-order').style.display = 'none';
+  }
+
+  function renderApkGrid() {
+    const apkGrid = document.getElementById('apkGrid');
+    apkGrid.innerHTML = '';
+    const app = apkData[currentAppIndex];
+    if (!app) return;
+
+    app.plans.forEach((plan, i) => {
+      const div = document.createElement('div');
+      div.className = 'pkg';
+      div.innerHTML = `
+        <div class="diamond" style="font-size:1rem;">${app.emoji}</div>
+        <div class="diamond-label" style="font-size:0.75rem; color: var(--neon-purple);">${plan.dur}</div>
+        <div class="price">${formatRupiah(plan.price)}</div>
+      `;
+      div.onclick = () => selectApkPlan(i, div);
+      apkGrid.appendChild(div);
+    });
+  }
+
+  function selectApkPlan(i, el) {
+    document.querySelectorAll('#apkGrid .pkg').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    const app = apkData[currentAppIndex];
+    selectedApk = { app: app.name, ...app.plans[i] };
+    document.getElementById('apk-form').style.display = 'block';
+    document.getElementById('apk-summary').style.display = 'block';
+    document.getElementById('btn-apk-order').style.display = 'block';
+    updateApkSummary();
+  }
+
+  function updateApkSummary() {
+    if (!selectedApk) return;
+    const email = document.getElementById('apkEmail').value || '—';
+    document.getElementById('apk-sum-app').textContent = selectedApk.app;
+    document.getElementById('apk-sum-dur').textContent = selectedApk.dur;
+    document.getElementById('apk-sum-email').textContent = email;
+    document.getElementById('apk-sum-price').textContent = formatRupiah(selectedApk.price);
+  }
+
+  function sendApkOrder() {
+    if (!selectedApk) { alert('Pilih paket APK dulu!'); return; }
+    const email = document.getElementById('apkEmail').value.trim();
+    const wa = document.getElementById('waNum').value.trim();
+    if (!email) { alert('Masukkan email / akun tujuan!'); return; }
+    if (!wa) { alert('Masukkan nomor WhatsApp kamu!'); return; }
+
+    const msg = `Halo Shine Store! 👋
+
+Saya ingin beli APK Premium:
+
+📱 *Aplikasi:* ${selectedApk.app} Premium
+📅 *Durasi:* ${selectedApk.dur}
+💰 *Harga:* ${formatRupiah(selectedApk.price)}
+📧 *Email:* ${email}
+📱 *No. WA saya:* ${wa}
+
+Mohon dikonfirmasi. Terima kasih!`;
+
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  }
+
+  // Init APK section on load
+  initApkSection();
+
+</script>
+
+</body>
+</html>
