@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shine Store — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--surface:#0e1117;--surface2:#141820;--neon-blue:#3b9eff;--neon-gold:#f5c842;--neon-purple:#a855f7;--neon-green:#22d3a0;--neon-red:#f43f5e;--text:#f0f4ff;--text-dim:#5a6580;--border:rgba(59,158,255,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(245,200,66,0.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,158,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(59,158,255,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;}
+.login-box{background:linear-gradient(145deg,#0e1117,#141820);border:1px solid rgba(245,200,66,0.2);border-radius:20px;padding:40px 32px;width:min(360px,92vw);text-align:center;position:relative;}
+.login-box::before{content:'';position:absolute;top:0;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,66,0.6),transparent);}
+.login-icon{font-size:2.5rem;margin-bottom:14px;}
+.login-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.login-sub{font-size:0.8rem;color:var(--text-dim);margin-bottom:24px;}
+.login-err{color:var(--neon-red);font-size:0.78rem;margin-bottom:10px;display:none;}
+.login-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;transition:all 0.2s;margin-bottom:12px;text-align:center;letter-spacing:4px;}
+.login-input:focus{border-color:var(--neon-gold);}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,#ca8a04,var(--neon-gold));color:#000;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:1.5px;border:none;border-radius:10px;cursor:pointer;}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:var(--text-dim);font-size:0.8rem;text-decoration:none;}
+.back-link:hover{color:var(--text);}
+
+.admin-panel{display:none;}
+header{position:relative;z-index:10;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(245,200,66,0.15);background:rgba(7,9,15,0.95);backdrop-filter:blur(20px);}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--text);}
+.logo span{color:var(--neon-gold);}
+.admin-badge{background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3);color:var(--neon-gold);padding:5px 12px;border-radius:6px;font-size:0.72rem;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.btn-logout{background:transparent;border:1px solid rgba(244,63,94,0.3);color:var(--neon-red);padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;}
+.btn-view-store{background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.3);color:var(--neon-blue);padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;text-decoration:none;}
+
+.sections{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
+.section{background:linear-gradient(145deg,rgba(14,17,23,0.9),rgba(20,24,32,0.8));border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;position:relative;}
+.section::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--neon-gold),transparent);opacity:0.5;}
+.section-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--neon-gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.section-title span{font-size:0.63rem;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;font-weight:400;}
+
+/* STATUS */
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:12px;}
+.toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:26px;cursor:pointer;transition:all 0.3s;}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:all 0.3s;}
+.toggle-switch input:checked + .toggle-slider{background:var(--neon-green);}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(22px);}
+.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.time-box{background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 14px;}
+.time-box label{font-size:0.65rem;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;display:block;margin-bottom:6px;}
+.time-box input{background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;outline:none;width:100%;}
+.mode-info{font-size:0.72rem;color:var(--text-dim);text-align:center;padding:8px;background:rgba(59,158,255,0.04);border:1px solid rgba(59,158,255,0.1);border-radius:8px;}
+
+/* BBC */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;}
+.pkg-item{background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+.pkg-item:hover{border-color:rgba(244,63,94,0.4);}
+.pkg-item.sold{border-color:rgba(244,63,94,0.5);background:rgba(244,63,94,0.05);}
+.pkg-item.sold::after{content:'SOLD OUT';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,9,15,0.72);color:var(--neon-red);font-family:'Syne',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:2px;border-radius:10px;}
+.pkg-num{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;}
+.pkg-lbl{font-size:0.6rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin:2px 0 6px;}
+.pkg-prc{font-size:0.76rem;color:var(--neon-blue);font-weight:600;}
+
+/* APK */
+.apk-add-row{display:grid;grid-template-columns:1fr 70px auto;gap:8px;margin-bottom:16px;align-items:end;}
+.ig{display:flex;flex-direction:column;gap:5px;}
+.ig label{font-size:0.65rem;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;}
+.mi{background:var(--surface2);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;width:100%;transition:border-color 0.2s;}
+.mi:focus{border-color:var(--neon-blue);}
+.apk-manage-item{background:var(--surface2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;margin-bottom:10px;}
+.apk-manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.apk-manage-name{display:flex;align-items:center;gap:8px;}
+.apk-manage-actions{display:flex;gap:6px;}
+.btn-sm-g{padding:6px 12px;background:rgba(34,211,160,0.1);color:var(--neon-green);border:1px solid rgba(34,211,160,0.3);border-radius:7px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;}
+.btn-sm-r{padding:6px 12px;background:rgba(244,63,94,0.1);color:var(--neon-red);border:1px solid rgba(244,63,94,0.3);border-radius:7px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;}
+.plan-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;}
+.plan-hdr{font-size:0.63rem;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,#ca8a04,var(--neon-gold));color:#000;border:none;border-radius:9px;cursor:pointer;font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:1px;}
+
+/* APK SOLD */
+.apk-tab-btn{background:var(--surface2);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:7px 14px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.apk-tab-btn.active{border-color:rgba(168,85,247,0.4);color:var(--neon-purple);background:rgba(168,85,247,0.08);}
+.apk-sold-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface2);border-radius:10px;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
+.apk-sold-badge{font-size:0.75rem;font-weight:700;font-family:'Syne',sans-serif;padding:4px 10px;border-radius:6px;}
+.apk-sold-badge.sold{color:var(--neon-red);background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.3);}
+.apk-sold-badge.avail{color:var(--neon-green);background:rgba(34,211,160,0.08);border:1px solid rgba(34,211,160,0.2);}
+
+.toast{position:fixed;bottom:24px;right:16px;left:16px;text-align:center;background:linear-gradient(135deg,#166534,var(--neon-green));color:#fff;font-family:'Syne',sans-serif;font-weight:700;padding:11px 22px;border-radius:10px;z-index:2000;transform:translateY(80px);opacity:0;transition:all 0.3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+@media(max-width:600px){
+  .sections{padding:16px 12px 50px;}
+  .section{padding:18px 14px;}
+  .apk-add-row{grid-template-columns:1fr 60px auto;}
+  .pkg-grid{grid-template-columns:repeat(3,1fr);}
+  .plan-row{grid-template-columns:1fr 90px auto;}
+  .header-right{gap:6px;}
+  .btn-view-store{display:none;}
+}
+
+/* SECTION hover */
+.section{transition:border-color 0.3s;}
+.section:hover{border-color:rgba(245,200,66,0.18);}
+
+/* STATUS ROW green/red glow */
+.status-row{transition:all 0.3s;}
+.toggle-switch input:checked ~ *{transition:all 0.3s;}
+
+/* PKG ITEM refinement */
+.pkg-item{transition:all 0.2s;}
+.pkg-item:not(.sold):hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.3);}
+
+/* APK manage item */
+.apk-manage-item{transition:border-color 0.2s;}
+.apk-manage-item:hover{border-color:rgba(255,255,255,0.1);}
+
+/* Buttons */
+.btn-sm-g:hover{background:rgba(34,211,160,0.18);}
+.btn-sm-r:hover{background:rgba(244,63,94,0.18);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,200,66,0.25);}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,200,66,0.3);}
+
+/* Input focus */
+.mi:focus{border-color:var(--neon-gold);box-shadow:0 0 0 3px rgba(245,200,66,0.06);}
+.login-input:focus{box-shadow:0 0 0 3px rgba(245,200,66,0.06);}
+
+/* Sections fade-in */
+.sections{animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Section title decoration */
+.section-title::before{content:'';display:inline-block;width:4px;height:16px;background:linear-gradient(180deg,var(--neon-gold),rgba(245,200,66,0.3));border-radius:2px;flex-shrink:0;}
+
+/* APK sold item hover */
+.apk-sold-item:hover{border-color:rgba(255,255,255,0.1)!important;transform:translateX(2px);}
+
+/* Header back link */
+.btn-view-store:hover{background:rgba(59,158,255,0.16);}
+
+/* Mode info */
+.mode-info{transition:all 0.3s;}
+
+/* Plan row input */
+.mi[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+/* Login box pulse */
+.login-box{box-shadow:0 0 60px rgba(245,200,66,0.04);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:4px;}
+
+/* MAINTENANCE TOGGLE */
+.maint-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.2);border-radius:12px;margin-top:12px;}
+.maint-row.active{background:rgba(244,63,94,0.06);border-color:rgba(244,63,94,0.3);}
+.maint-toggle-label{font-size:0.88rem;font-weight:600;color:var(--neon-gold);}
+.maint-toggle-label.active{color:var(--neon-red);}
+.maint-toggle-sub{font-size:0.72rem;color:var(--text-dim);margin-top:2px;}
+.toggle-switch-red input:checked + .toggle-slider{background:var(--neon-red);}
+
+select.mi{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6580' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+
+select.mi{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%235a6580' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+select.mi option{background:var(--surface2);color:var(--text);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">Masukkan password untuk masuk</div>
+    <div class="login-err" id="loginErr">❌ Password salah!</div>
+    <input type="password" class="login-input" id="passInput" placeholder="••••••" maxlength="20" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">MASUK →</button>
+    <br>
+    <a href="index.html" class="back-link">← Kembali ke Toko</a>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+  <header>
+    <div>
+      <div class="logo">SHINE<span>STORE</span></div>
+      <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;">Admin Dashboard</div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="btn-view-store">🏪 Lihat Toko</a>
+      <div class="admin-badge">🔧 ADMIN</div>
+      <button class="btn-logout" onclick="doLogout()">KELUAR</button>
+    </div>
+  </header>
+
+  <div class="sections">
+
+    <!-- STATUS TOKO -->
+    <div class="section">
+      <div class="section-title">Status Toko <span>OPEN / CLOSE</span></div>
+      <div class="status-row">
+        <div>
+          <div style="font-size:0.9rem;font-weight:600;" id="storeStatusLabel">🟢 Toko Buka</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);margin-top:2px;" id="storeStatusSub">Pelanggan bisa order</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="storeToggle" checked onchange="toggleStoreStatus()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="time-grid">
+        <div class="time-box"><label>Jam Buka</label><input type="time" id="openTimeInput" value="08:00" onchange="saveStoreTime()"></div>
+        <div class="time-box"><label>Jam Tutup</label><input type="time" id="closeTimeInput" value="22:00" onchange="saveStoreTime()"></div>
+      </div>
+      <div class="mode-info" id="modeInfo">Mode: Otomatis (berdasarkan jam)</div>
+
+      <!-- MAINTENANCE TOGGLE -->
+      <div class="maint-row" id="maintRow">
+        <div>
+          <div class="maint-toggle-label" id="maintLabel">🔧 Mode Maintenance</div>
+          <div class="maint-toggle-sub" id="maintSub">Website tampil halaman maintenance untuk pengunjung</div>
+        </div>
+        <label class="toggle-switch toggle-switch-red">
+          <input type="checkbox" id="maintToggle" onchange="toggleMaintenance()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- SOLD OUT BBC -->
+    <div class="section">
+      <div class="section-title">Paket BBC <span>KLIK UNTUK SOLD OUT / AKTIF</span></div>
+      <div class="pkg-grid" id="bbcGrid"></div>
+    </div>
+
+    <!-- KELOLA APK -->
+    <div class="section">
+      <div class="section-title">Kelola APK <span>TAMBAH / EDIT / HAPUS</span></div>
+      <div class="apk-add-row">
+        <div class="ig"><label>Nama Aplikasi</label><input type="text" class="mi" id="newAppName" placeholder="Contoh: YouTube"></div>
+        <div class="ig"><label>Emoji</label><input type="text" class="mi" id="newAppEmoji" placeholder="▶️" maxlength="4" style="text-align:center;font-size:1.1rem;"></div>
+        <button class="btn-primary" style="margin-top:22px;" onclick="adminAddApp()">+ TAMBAH</button>
+      </div>
+      <div class="ig" style="margin-bottom:16px;">
+        <label>Kategori Aplikasi Baru</label>
+        <select class="mi" id="newAppKategori">
+          <option value="Edit">✏️ Edit</option>
+          <option value="Nonton">🎬 Nonton</option>
+          <option value="Musik">🎵 Musik</option>
+          <option value="Lainnya">📱 Lainnya</option>
+        </select>
+      </div>
+      <div id="apkManageList"></div>
+    </div>
+
+    <!-- SOLD OUT APK -->
+    <div class="section">
+      <div class="section-title">Sold Out APK <span>KLIK UNTUK SOLD OUT / AKTIF</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;margin-bottom:12px;" id="apkTabsAdmin"></div>
+      <div id="apkSoldGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PASS='875421';
+const SOLD_KEY='shinestore_sold';
+const SB_URL='https://simyjfxevsvomwqhphib.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpbXlqZnhldnN2b213cWhwaGliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzU0OTAsImV4cCI6MjA4Njk1MTQ5MH0.mN2r3tb5v4fglKs45xtMklEo-j_MrG7gD3sF79_MYqA';
+
+const BBC_PACKAGES=[
+  {bbc:5000,price:19000},{bbc:10000,price:38000},{bbc:15000,price:57000},
+  {bbc:20000,price:76000},{bbc:25000,price:95000},{bbc:30000,price:114000},
+  {bbc:35000,price:133000},{bbc:40000,price:152000},{bbc:45000,price:171000},{bbc:50000,price:190000},
+];
+const APK_DEFAULT=[
+  {name:'CapCut',emoji:'🎬',plans:[{dur:'7 Hari',price:1200},{dur:'14 Hari',price:1500},{dur:'21 Hari',price:1800},{dur:'28 Hari',price:2200},{dur:'35 Hari',price:2900},{dur:'42 Hari',price:3500}]},
+  {name:'Canva',emoji:'🎨',plans:[{dur:'1 Bulan',price:12000},{dur:'1 Tahun',price:108000},{dur:'Lifetime',price:118000}]},
+  {name:'iQIYI',emoji:'🎬',plans:[{dur:'Standar 1 Bulan',price:3000},{dur:'Standar 1 Tahun',price:7000}]},
+  {name:'Vidio',emoji:'📺',plans:[{dur:'Mobile Sharing 1 Bln',price:13300},{dur:'Mobile Private 1 Bln',price:21200},{dur:'All Device Sharing 1 Bln',price:19800}]},
+  {name:'Spotify',emoji:'🎵',plans:[{dur:'Individual',price:8000},{dur:'Individual No Garansi',price:800}]},
+  {name:'Netflix',emoji:'🎬',plans:[{dur:'1P 1U 1 Hari',price:2555},{dur:'1P 1U 1 Bulan',price:13000},{dur:'1P 2U 1 Bulan',price:10800},{dur:'Semi 1 Bulan',price:15500},{dur:'1P 1U 7 Hari',price:8800},{dur:'1P 2U 7 Hari',price:8000},{dur:'Semi 7 Hari',price:9800}]},
+  {name:'Alight Motion',emoji:'✨',plans:[{dur:'1 Tahun',price:1000}]},
+  {name:'Viu',emoji:'🎥',plans:[{dur:'1 Bulan',price:10},{dur:'1 Tahun',price:30},{dur:'Lifetime',price:2000}]},
+];
+
+const fmt=n=>'Rp '+n.toLocaleString('id-ID');
+const getSold=()=>{try{return JSON.parse(localStorage.getItem(SOLD_KEY))||{};}catch(e){return {};}};
+const saveSold=async d=>{
+  localStorage.setItem(SOLD_KEY,JSON.stringify(d));
+  try{await sbFetch('sold_out?id=eq.1',{method:'PATCH',body:JSON.stringify({data:d}),prefer:'return=minimal'});}
+  catch{try{await sbFetch('sold_out',{method:'POST',body:JSON.stringify({id:1,data:d}),prefer:'return=minimal'});}catch{}}
+};
+
+async function sbFetch(path,options={}){
+  const res=await fetch(SB_URL+'/rest/v1/'+path,{
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':options.prefer||'return=representation'},
+    ...options
+  });
+  if(!res.ok) throw new Error(await res.text());
+  return res.status===204?null:res.json();
+}
+
+async function getApkData(){try{return await sbFetch('apk_products?select=*&order=kategori.asc,urutan.asc');}catch(e){return APK_DEFAULT;}}
+
+// LOGIN
+function doLogin(){
+  if(document.getElementById('passInput').value===ADMIN_PASS){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    document.getElementById('passInput').value='';
+    document.getElementById('loginErr').style.display='none';
+    initAdmin();
+  }else{
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('passInput').value='';
+  }
+}
+function doLogout(){
+  document.getElementById('adminPanel').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+// INIT
+async function initAdmin(){
+  await loadSoldFromSupabase();
+  await loadStoreStatus();
+  renderBbc();
+  await renderManageList();
+  await renderApkSoldSection();
+}
+
+async function loadSoldFromSupabase(){
+  try{const r=await sbFetch('sold_out?id=eq.1&select=data');if(r&&r.length)localStorage.setItem(SOLD_KEY,JSON.stringify(r[0].data));}catch(e){}
+}
+
+// STORE STATUS
+let storeStatus={is_open:true,open_time:'08:00',close_time:'22:00',override:false};
+async function loadStoreStatus(){
+  try{const r=await sbFetch('store_status?id=eq.1&select=*');if(r&&r.length){storeStatus=r[0];applyStoreStatus();}}catch(e){applyStoreStatus();}
+}
+function applyStoreStatus(){
+  const{is_open,open_time,close_time,override,maintenance}=storeStatus;
+  let isOpen=is_open;
+  if(!override){
+    const now=new Date(),cur=now.getHours()*60+now.getMinutes();
+    const[oh,om]=open_time.split(':').map(Number),[ch,cm]=close_time.split(':').map(Number);
+    isOpen=cur>=oh*60+om&&cur<ch*60+cm;
+  }
+  document.getElementById('storeToggle').checked=isOpen;
+  document.getElementById('storeStatusLabel').textContent=isOpen?'🟢 Toko Buka':'🔴 Toko Tutup';
+  document.getElementById('storeStatusSub').textContent=isOpen?'Pelanggan bisa order':'Order tidak diterima';
+  document.getElementById('openTimeInput').value=open_time;
+  document.getElementById('closeTimeInput').value=close_time;
+  document.getElementById('modeInfo').textContent=override?'Mode: Manual (override aktif)':'Mode: Otomatis (berdasarkan jam)';
+
+  // Maintenance toggle
+  const isMaint = !!maintenance;
+  document.getElementById('maintToggle').checked = isMaint;
+  const maintRow = document.getElementById('maintRow');
+  const maintLabel = document.getElementById('maintLabel');
+  maintRow.classList.toggle('active', isMaint);
+  maintLabel.className = 'maint-toggle-label' + (isMaint ? ' active' : '');
+  maintLabel.textContent = isMaint ? '🚨 Maintenance AKTIF' : '🔧 Mode Maintenance';
+  document.getElementById('maintSub').textContent = isMaint
+    ? 'Pengunjung melihat halaman maintenance sekarang!'
+    : 'Website tampil halaman maintenance untuk pengunjung';
+}
+async function toggleStoreStatus(){
+  const isOpen=document.getElementById('storeToggle').checked;
+  storeStatus={...storeStatus,is_open:isOpen,override:true};
+  applyStoreStatus();showToast(isOpen?'✅ Toko dibuka!':'🔒 Toko ditutup!');
+  try{await sbFetch('store_status?id=eq.1',{method:'PATCH',body:JSON.stringify({is_open:isOpen,override:true}),prefer:'return=minimal'});}
+  catch(e){showToast('Gagal sync!');}
+}
+async function saveStoreTime(){
+  const open_time=document.getElementById('openTimeInput').value;
+  const close_time=document.getElementById('closeTimeInput').value;
+  storeStatus={...storeStatus,open_time,close_time,override:false};
+  applyStoreStatus();showToast('Jam operasional tersimpan ✓');
+  try{await sbFetch('store_status?id=eq.1',{method:'PATCH',body:JSON.stringify({open_time,close_time,override:false}),prefer:'return=minimal'});}
+  catch(e){showToast('Gagal sync!');}
+}
+
+async function toggleMaintenance(){
+  const isMaint=document.getElementById('maintToggle').checked;
+  storeStatus={...storeStatus,maintenance:isMaint};
+  applyStoreStatus();
+  showToast(isMaint?'🚨 Maintenance diaktifkan!':'✅ Maintenance dinonaktifkan!');
+  try{await sbFetch('store_status?id=eq.1',{method:'PATCH',body:JSON.stringify({maintenance:isMaint}),prefer:'return=minimal'});}
+  catch(e){showToast('Gagal sync!');}
+}
+
+// BBC SOLD OUT
+function renderBbc(){
+  const grid=document.getElementById('bbcGrid');grid.innerHTML='';
+  const sold=getSold();
+  BBC_PACKAGES.forEach(pkg=>{
+    const key='bbc_'+pkg.bbc,isSold=!!sold[key];
+    const div=document.createElement('div');
+    div.className='pkg-item'+(isSold?' sold':'');
+    div.innerHTML=`<div class="pkg-num">${pkg.bbc.toLocaleString('id-ID')}</div><div class="pkg-lbl">💎 BBC</div><div class="pkg-prc">${fmt(pkg.price)}</div>`;
+    div.onclick=async()=>{const s=getSold();if(s[key])delete s[key];else s[key]=true;await saveSold(s);renderBbc();showToast(s[key]?'Sold Out ✓':'Tersedia kembali');};
+    grid.appendChild(div);
+  });
+}
+
+// APK MANAGE
+let cachedApkData=null,curApkSoldIdx=0;
+
+async function renderManageList(){
+  cachedApkData=await getApkData();
+  const list=document.getElementById('apkManageList');
+  if(!cachedApkData.length){list.innerHTML='<p style="color:var(--text-dim);padding:16px;text-align:center;">Belum ada APK.</p>';return;}
+  list.innerHTML=cachedApkData.map((app,ai)=>`
+    <div class="apk-manage-item">
+      <div class="apk-manage-header">
+        <div class="apk-manage-name">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">${{Edit:'✏️',Nonton:'🎬',Musik:'🎵',Lainnya:'📱'}[app.category||'Lainnya']||'📱'}</div>
+          <input class="mi" style="width:140px;" value="${app.name}" onchange="updateApp(${ai},'name',this.value)">
+        </div>
+        <div class="apk-manage-actions">
+          <button class="btn-sm-g" onclick="addPlan(${ai})">+ PAKET</button>
+          <button class="btn-sm-r" onclick="deleteApp(${ai})">🗑 HAPUS</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:0.63rem;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;display:block;margin-bottom:5px;">Kategori</label>
+        <select class="mi" style="width:100%;cursor:pointer;" onchange="updateApp(${ai},'kategori',this.value)">
+          <option value="Edit" ${(app.kategori||'Lainnya')==='Edit'?'selected':''}>✏️ Edit</option>
+          <option value="Nonton" ${(app.kategori||'Lainnya')==='Nonton'?'selected':''}>🎬 Nonton</option>
+          <option value="Musik" ${(app.kategori||'Lainnya')==='Musik'?'selected':''}>🎵 Musik</option>
+          <option value="Lainnya" ${(app.kategori||'Lainnya')==='Lainnya'?'selected':''}>📱 Lainnya</option>
+        </select>
+      </div>
+      ${app.plans.length?'<div class="plan-hdr">Durasi — Harga (Rp)</div>':''}
+      ${app.plans.map((plan,pi)=>`
+        <div class="plan-row">
+          <input class="mi" style="width:100%;" value="${plan.dur}" onchange="updatePlan(${ai},${pi},'dur',this.value)">
+          <input class="mi" type="number" style="width:100%;" value="${plan.price}" onchange="updatePlan(${ai},${pi},'price',this.value)">
+          <button class="btn-sm-r" onclick="deletePlan(${ai},${pi})">🗑</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+async function adminAddApp(){
+  const name=document.getElementById('newAppName').value.trim();
+  const emoji=document.getElementById('newAppEmoji').value.trim()||'📱';
+  const kategori=document.getElementById('newAppKategori').value||'Lainnya';
+  if(!name){showToast('Nama wajib diisi!');return;}
+  try{
+    const data=cachedApkData||[];
+    await sbFetch('apk_products',{method:'POST',body:JSON.stringify({name,emoji,plans:[],urutan:data.length+1,kategori})});
+    document.getElementById('newAppName').value='';document.getElementById('newAppEmoji').value='';
+    await renderManageList();await renderApkSoldSection();showToast('Aplikasi ditambahkan! ✅');
+  }catch(e){showToast('Gagal: '+e.message);}
+}
+async function updateApp(ai,field,val){
+  try{const u={};u[field]=val;await sbFetch('apk_products?id=eq.'+cachedApkData[ai].id,{method:'PATCH',body:JSON.stringify(u),prefer:'return=minimal'});showToast('Tersimpan ✓');}
+  catch(e){showToast('Gagal simpan');}
+}
+async function deleteApp(ai){
+  if(!confirm('Hapus aplikasi ini?'))return;
+  try{await sbFetch('apk_products?id=eq.'+cachedApkData[ai].id,{method:'DELETE',prefer:'return=minimal'});await renderManageList();await renderApkSoldSection();showToast('Dihapus!');}
+  catch(e){showToast('Gagal hapus');}
+}
+async function addPlan(ai){
+  try{const app=cachedApkData[ai];const plans=[...app.plans,{dur:'Durasi Baru',price:0}];await sbFetch('apk_products?id=eq.'+app.id,{method:'PATCH',body:JSON.stringify({plans}),prefer:'return=minimal'});await renderManageList();await renderApkSoldSection();}
+  catch(e){showToast('Gagal tambah paket');}
+}
+async function updatePlan(ai,pi,field,val){
+  try{const app=cachedApkData[ai];const plans=JSON.parse(JSON.stringify(app.plans));plans[pi][field]=field==='price'?parseInt(val)||0:val;await sbFetch('apk_products?id=eq.'+app.id,{method:'PATCH',body:JSON.stringify({plans}),prefer:'return=minimal'});showToast('Tersimpan ✓');}
+  catch(e){showToast('Gagal simpan');}
+}
+async function deletePlan(ai,pi){
+  try{const app=cachedApkData[ai];const plans=JSON.parse(JSON.stringify(app.plans));plans.splice(pi,1);await sbFetch('apk_products?id=eq.'+app.id,{method:'PATCH',body:JSON.stringify({plans}),prefer:'return=minimal'});await renderManageList();await renderApkSoldSection();showToast('Paket dihapus!');}
+  catch(e){showToast('Gagal hapus paket');}
+}
+
+// APK SOLD
+async function renderApkSoldSection(){
+  if(!cachedApkData)cachedApkData=await getApkData();
+  const tabs=document.getElementById('apkTabsAdmin');tabs.innerHTML='';
+  cachedApkData.forEach((app,i)=>{
+    const btn=document.createElement('button');
+    btn.className='apk-tab-btn'+(i===curApkSoldIdx?' active':'');
+    btn.textContent=app.emoji+' '+app.name;
+    btn.onclick=()=>{curApkSoldIdx=i;renderApkSoldSection();};
+    tabs.appendChild(btn);
+  });
+  renderApkSoldGrid();
+}
+function renderApkSoldGrid(){
+  const grid=document.getElementById('apkSoldGrid');grid.innerHTML='';
+  const app=(cachedApkData||APK_DEFAULT)[curApkSoldIdx];if(!app)return;
+  const sold=getSold();
+  app.plans.forEach((plan,i)=>{
+    const key='apk_'+app.name+'_'+i,isSold=!!sold[key];
+    const div=document.createElement('div');
+    div.className='apk-sold-item';
+    div.style.border=`1px solid ${isSold?'rgba(244,63,94,0.3)':'rgba(255,255,255,0.06)'}`;
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1rem;">${{Edit:'✏️',Nonton:'🎬',Musik:'🎵',Lainnya:'📱'}[app.category||'Lainnya']||'📱'}</span>
+        <div><div style="font-size:0.88rem;font-weight:600;color:var(--text);">${plan.dur}</div><div style="font-size:0.72rem;color:var(--text-dim);">${fmt(plan.price)}</div></div>
+      </div>
+      <div class="apk-sold-badge ${isSold?'sold':'avail'}">${isSold?'SOLD OUT':'TERSEDIA'}</div>`;
+    div.onclick=async()=>{
+      const s=getSold();if(s[key])delete s[key];else s[key]=true;
+      await saveSold(s);renderApkSoldGrid();showToast(s[key]?'Sold Out ✓':'Tersedia kembali');
+    };
+    grid.appendChild(div);
+  });
+}
+
+// TOAST
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
